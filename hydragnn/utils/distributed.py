@@ -14,6 +14,7 @@ import re
 
 import torch
 import torch.distributed as dist
+from torch.distributed.fsdp import FullyShardedDataParallel as FSDP
 
 from .print_utils import print_distributed
 
@@ -236,9 +237,10 @@ def get_distributed_model(model, verbosity=0, sync_batch_norm=False):
             if sync_batch_norm:
                 model = torch.nn.SyncBatchNorm.convert_sync_batchnorm(model)
             device = get_device_from_name(device_name)
-            model = torch.nn.parallel.DistributedDataParallel(
-                model, device_ids=[device]
-            )
+            #model = torch.nn.parallel.DistributedDataParallel(
+            #    model, device_ids=[device]
+            #)
+            model = FSDP(model)
     return model
 
 
